@@ -10,11 +10,20 @@ namespace SFIntegration
 {
     class Program
     {
+        private static string _sessionId;
+        private static string _metadataUrl;
+
         static void Main(string[] args)
         {
             LoginResult loginResult = Login();
 
-            CreateMetadataObjects(loginResult.sessionId, loginResult.metadataServerUrl);
+            _sessionId = loginResult.sessionId;
+            _metadataUrl = loginResult.metadataServerUrl;
+
+            // WORKS...
+            //CreateNewObject("MetadataObject1");
+
+            CreateWorkflow();
         }
 
         private static LoginResult Login()
@@ -41,16 +50,39 @@ namespace SFIntegration
         //private static void Logout(string sessionId, string url)
         //{
         //    var soapClient = new SoapClient("Soap", url);
-        //    var result = soapClient.logout(new JRSandbox.SessionHeader null);
+        //    var result = soapClient.logout(new JRSandbox.SessionHeader {  sessionId = _sessionId })
+
+        //    //var result = soapClient.logout();
         //    Console.WriteLine($"Logged out of session ID {sessionId}");
         //}
 
-        private static void CreateMetadataObjects(string sessionId, string metadataUrl)
+        private static void CreateWorkflow()
         {
-            string name = "JRTestName";
-            string label = "JRTestLabel";
-            string pluralLabel = "JRTestLabels";
+            // Notes:
+            // Fullname - must match ObjectName.RuleName
+            // Formula - FieldName <operator> value
 
+            var wfRule = new WorkflowRule
+            {
+                fullName = "Opportunity.MetaDataRule",
+                description = "Created from metadata API",
+                triggerType = WorkflowTriggerTypes.onAllChanges,
+                formula = "Amount > -1",
+                active = false,
+            };
+
+            SendMetadata(new Metadata[] { wfRule });
+        }
+
+
+
+        private static void CreateNewObject(string name)
+        {
+            string label = name;
+            string pluralLabel = name + "s";
+
+            // objects are similar to tables in relational databases...
+            // a place to hold data, and ui and crud almost comes for free
             var customObject = new CustomObject
             {
                 fullName = name + "__c",
@@ -74,12 +106,15 @@ namespace SFIntegration
 
             var objects = new Metadata[] { customObject };
 
-            // send it
-            MetadataPortTypeClient metaClient = new MetadataPortTypeClient("Metadata", metadataUrl);
-            var sessionHeader = new JRSandbox.Metadata.SessionHeader { sessionId = sessionId };
+            SendMetadata(objects);
+        }
 
-            var result = metaClient.createMetadata(sessionHeader, null, null, objects);
+        private static void SendMetadata(Metadata[] metadata)
+        {
+            MetadataPortTypeClient metaClient = new MetadataPortTypeClient("Metadata", _metadataUrl);
+            var sessionHeader = new JRSandbox.Metadata.SessionHeader { sessionId = _sessionId };
 
+            var result = metaClient.createMetadata(sessionHeader, null, null, metadata);
         }
     }
 }
