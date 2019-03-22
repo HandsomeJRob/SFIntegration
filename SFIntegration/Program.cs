@@ -45,7 +45,7 @@ namespace SFIntegration
 
             try
             {
-                CreateNewObject("MetadataObject1");
+                //CreateNewObject("MetadataObject1");
 
                 CreateWorkflow();
             }
@@ -61,13 +61,20 @@ namespace SFIntegration
 
             using (var client = new SoapClient())
             {
-                string username = "jonathan.d.robertson1985@gmail.com";
 
                 // Salesforce uses password + token to authenticate external systems
                 // To get a token... https://help.salesforce.com/articleView?id=user_security_token.htm&type=5
                 // https://blog.mkorman.uk/integrating-with-metadata-api/
+
+                //string username = "jonathan.d.robertson1985@gmail.com";
+                //string password = "$uckyPass1";
+                //string token = "lDGd3rMQtLHJJazKnjRYUHcu";
+                //string loginPassword = password + token;
+
+                // testing wsdl with alternate sandbox
+                string username = "spambot4cats2u@outlook.com";
                 string password = "$uckyPass1";
-                string token = "lDGd3rMQtLHJJazKnjRYUHcu";
+                string token = "Xri9fsalKQyZM45a7LkaBp1lv";
                 string loginPassword = password + token;
 
                 // throws exception if not successful
@@ -93,7 +100,8 @@ namespace SFIntegration
                 name = "JROpportunityAction",
                 fullName = "Opportunity.JROpportunityAction",
                 endpointUrl = "https://prod-17.centralus.logic.azure.com:443/workflows/8ce4281445fe47e695a4ee65d14913cd/triggers/manual/paths/invoke?api-version=2016-10-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=7K9iP14qF4cy-dTTfz3PMKQn9h5Ll3qzFQ-t1Pyjw3I",
-                integrationUser = "jonathan.d.robertson1985@gmail.com",
+                //integrationUser = "jonathan.d.robertson1985@gmail.com",
+                integrationUser = "spambot4cats2u@outlook.com",
                 description = "Check out this action",
                 apiVersion = 45,
                 fields = new string[]
